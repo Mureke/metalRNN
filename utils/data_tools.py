@@ -1,15 +1,19 @@
 import io
+import os
 from settings.data_norm_constants import MIN_WORD_FREQUENCY, SEQUENCE_LEN
 import keras
 import numpy as np
+import csv
 
 
 def corpus_to_dictionary(path: str):
+    print('corupus to dict')
     with io.open(path) as f:
         # Get words from corpus file
         text = f.read().lower().replace('\n', ' \n ').replace('\\', ' \n ')
-        text_in_words = keras.preprocessing.text.text_to_word_sequence(text, filters='"#$%&()*+,-./:;<=>@[\\]^_`{|}~\t', lower=True,
-                                                      split=' ')
+        text_in_words = keras.preprocessing.text.text_to_word_sequence(text, filters='"#$%&()*+,-./:;<=>@[\\]^_`{|}~\t',
+                                                                       lower=True,
+                                                                       split=' ')
         print('Corpus length in words:', len(text_in_words))
         if ('\n' in text_in_words):
             index = text_in_words.index('\n')
@@ -31,16 +35,18 @@ def corpus_to_dictionary(path: str):
 
         # Remove ignored words from set
         words = sorted(set(words) - ignored)
-        print('Unique words after removeing ignored words:', len(words))
+        print('Unique words after removing ignored words:', len(words))
 
         # Create two dictionaries. One with word as a key and index as value. One with index as key and word as a value
         word_indices = dict((c, i) for i, c in enumerate(words))
         indices_word = dict((i, c) for i, c in enumerate(words))
 
-        return word_indices, indices_word, text_in_words, ignored
+        print('EOF: corpus_to_dictionary()')
+        return text_in_words, ignored
 
 
 def create_and_filter_sequences(text_in_words, ignored_words):
+    print('start: create_and_filter_sequences')
     STEP = 1
     sentences = []
     next_words = []
@@ -57,8 +63,7 @@ def create_and_filter_sequences(text_in_words, ignored_words):
             ignored = ignored + 1
     print('Ignored sequences:', ignored)
     print('Remaining sequences:', len(sentences))
-    print('setnences ', sentences[0])
-    print('next ', next_words[0])
+
     return sentences, next_words
 
 
@@ -79,17 +84,7 @@ def shuffle_and_split_training_set(sentences_original, next_original, percentage
 
     print("Size of training set = %d" % len(x_train))
     print("Size of test set = %d" % len(y_test))
+
+    print('end: shuffle_and_split_training_set')
+
     return (x_train, y_train), (x_test, y_test)
-
-
-def save_sets(x_train, y_train, x_test, y_test):
-    test = 'sad'
-    return
-
-
-if __name__ == '__main__':
-    corpus_path = '../lyrics/raw.txt'
-    word_indices, indices_word, text_in_words, ignored_words = corpus_to_dictionary(corpus_path)
-    sequences, next_words = create_and_filter_sequences(text_in_words, ignored_words)
-    (sentences_train, next_words_train), (sentences_test, next_words_test) = shuffle_and_split_training_set(sequences, next_words)
-    save_sets(sentences_test, next_words_test, sentences_test, next_words_test)

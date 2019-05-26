@@ -2,7 +2,7 @@ import keras
 from settings.model_constants import DROPOUT, USE_DROPOUT, BATCH_SIZE
 from keras.layers import Dense, Dropout, Activation, LSTM, Bidirectional, Embedding
 from keras.models import Sequential
-from keras import mode
+from keras import model
 import numpy as np
 import random
 import sys
@@ -17,4 +17,4 @@ def get_model(words):
     if USE_DROPOUT > 0 and DROPOUT > 0:
         model.add(Dropout(DROPOUT))
     model.add(Dense(len(words)))
-    model.add(Activation('softmax'))
+    model.add(Activation('relu'))

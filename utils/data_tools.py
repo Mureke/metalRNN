@@ -42,7 +42,7 @@ def corpus_to_dictionary(path: str):
         indices_word = dict((i, c) for i, c in enumerate(words))
 
         print('EOF: corpus_to_dictionary()')
-        return text_in_words, ignored
+        return text_in_words, ignored, word_indices, indices_word
 
 
 def create_and_filter_sequences(text_in_words, ignored_words):
